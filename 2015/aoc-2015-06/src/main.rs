@@ -1,54 +1,13 @@
 use regex::Regex;
 use std::fs;
 
-fn run_light_instructions(
-    mut lights: [[bool; 1000]; 1000],
-    instructions: &str,
-) -> [[bool; 1000]; 1000] {
-    let match_instructions_regex =
-        Regex::new(r"(.*) ([0-9]+),([0-9]+) through ([0-9]+),([0-9]+)").unwrap();
-    let captures = match_instructions_regex.captures(instructions).unwrap();
+type Grid = [[u32; 1000]; 1000];
 
-    let instruction = captures.get(1).map_or("", |m| m.as_str());
-    let start_x = captures
-        .get(2)
-        .map_or(0, |m| m.as_str().parse::<usize>().unwrap());
-    let start_y = captures
-        .get(3)
-        .map_or(0, |m| m.as_str().parse::<usize>().unwrap());
-    let end_x = captures
-        .get(4)
-        .map_or(0, |m| m.as_str().parse::<usize>().unwrap());
-    let end_y = captures
-        .get(5)
-        .map_or(0, |m| m.as_str().parse::<usize>().unwrap());
-
-    if instruction.is_empty() {
-        return lights;
-    }
-
-    for row in &mut lights[start_x..=end_x] {
-        for light in &mut row[start_y..=end_y] {
-            *light = match instruction {
-                "turn on" => true,
-                "turn off" => false,
-                "toggle" => !*light,
-                _ => *light,
-            }
-        }
-    }
-
+fn calculate_lights(lights: &Grid) -> usize {
     lights
-}
-
-fn calculate_lights(mut lights: [[bool; 1000]; 1000]) -> usize {
-    let mut sum: usize = 0;
-    for row in &mut lights[..] {
-        for light in &mut row[..] {
-            sum += if *light { 1 } else { 0 };
-        }
-    }
-    sum
+        .iter()
+        .map(|&row| row.iter().sum::<u32>() as usize)
+        .sum()
 }
 
 fn main() {
@@ -56,10 +15,61 @@ fn main() {
     let input = fs::read_to_string(file).unwrap();
     let lines = input.split("\n").filter(|l| !l.is_empty());
 
-    let mut lights = [[false; 1000]; 1000];
-    for line in lines {
-        lights = run_light_instructions(lights, line);
+    let mut lights: Grid = [[0; 1000]; 1000];
+    let mut lights_2: Grid = [[0; 1000]; 1000];
+
+    for instructions in lines {
+        let match_instructions_regex =
+            Regex::new(r"(.*) ([0-9]+),([0-9]+) through ([0-9]+),([0-9]+)").unwrap();
+        let captures = match_instructions_regex.captures(instructions).unwrap();
+
+        let instruction = captures.get(1).map_or("", |m| m.as_str());
+        let start_x = captures
+            .get(2)
+            .map_or(0, |m| m.as_str().parse::<usize>().unwrap());
+        let start_y = captures
+            .get(3)
+            .map_or(0, |m| m.as_str().parse::<usize>().unwrap());
+        let end_x = captures
+            .get(4)
+            .map_or(0, |m| m.as_str().parse::<usize>().unwrap());
+        let end_y = captures
+            .get(5)
+            .map_or(0, |m| m.as_str().parse::<usize>().unwrap());
+
+        for x in start_x..=end_x {
+            for y in start_y..=end_y {
+                // Part 1
+                lights[x][y] = match instruction {
+                    "turn on" => 1,
+                    "turn off" => 0,
+                    "toggle" => {
+                        if lights[y][x] == 0 {
+                            1
+                        } else {
+                            0
+                        }
+                    }
+                    _ => lights[y][x],
+                };
+
+                // Part 2
+                lights_2[x][y] = match instruction {
+                    "turn on" => lights_2[x][y] + 1,
+                    "turn off" => {
+                        if lights_2[x][y] <= 1 {
+                            0
+                        } else {
+                            lights_2[x][y] - 1
+                        }
+                    }
+                    "toggle" => lights_2[x][y] + 2,
+                    _ => lights_2[x][y],
+                };
+            }
+        }
     }
 
-    dbg!(calculate_lights(lights));
+    println!("Lights part 1: {}", calculate_lights(&lights));
+    println!("Lights part 2: {}", calculate_lights(&lights_2));
 }
