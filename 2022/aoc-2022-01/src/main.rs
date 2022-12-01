@@ -3,12 +3,13 @@ use std::fs;
 fn main() {
     let data = fs::read_to_string("./input.txt").expect("Unable to read file");
 
-    // Part 1
     let mut highest_total = 0;
+    let mut totals: Vec<usize> = vec![];
     let mut current_elf_calories = 0;
 
     for line in data.lines().into_iter() {
         if line.trim() == "" {
+            totals.push(current_elf_calories);
             highest_total = if current_elf_calories > highest_total {
                 current_elf_calories
             } else {
@@ -22,20 +23,6 @@ fn main() {
     }
 
     println!("Part 1: {:?}", highest_total);
-
-    // Part 2
-    let mut totals: Vec<usize> = vec![];
-    let mut current_elf_calories = 0;
-
-    for line in data.lines().into_iter() {
-        if line.trim() == "" {
-            totals.push(current_elf_calories);
-            current_elf_calories = 0;
-        } else {
-            let calories = line.parse::<usize>().unwrap();
-            current_elf_calories += calories;
-        }
-    }
 
     totals.sort();
     totals.reverse();
