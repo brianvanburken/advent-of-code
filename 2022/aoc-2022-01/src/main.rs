@@ -27,7 +27,7 @@ fn main() {
     totals.sort();
     totals.reverse();
 
-    let top_3: usize = totals[0..3].iter().sum();
+    let top_3: usize = totals.iter().take(3).sum();
 
     println!("Part 2: {:?}", top_3);
 }
