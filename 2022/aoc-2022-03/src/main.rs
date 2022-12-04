@@ -15,9 +15,7 @@ fn main() {
         .into_iter()
         .map(|line| {
             let compartment_length = line.len() / 2;
-            let compartment_a = &line[0..compartment_length];
-            let compartment_b = &line[compartment_length..];
-
+            let (compartment_a, compartment_b) = line.split_at(compartment_length);
             let matched_common_char = compartment_a
                 .chars()
                 .find(|&c| compartment_b.contains(c))
