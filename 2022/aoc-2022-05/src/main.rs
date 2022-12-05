@@ -14,10 +14,9 @@ fn part_1(input: &String) {
     let moves = parse_moves(moves_part);
 
     for (amount, from, to) in moves.iter() {
-        for _ in 0..*amount {
-            let crate_to_move: char = towers[from - 1].pop().expect("Tower is empty");
-            towers[to - 1].push(crate_to_move);
-        }
+        let crates_range = towers[from - 1].len() - amount..;
+        let crates: Vec<char> = towers[from - 1].drain(crates_range).rev().collect();
+        towers[to - 1].extend(crates);
     }
 
     let top_crates = towers
@@ -36,8 +35,8 @@ fn part_2(input: &String) {
     let moves = parse_moves(moves_part);
 
     for (amount, from, to) in moves.iter() {
-        let crates_amount = towers[from - 1].len() - amount..;
-        let crates: Vec<char> = towers[from - 1].drain(crates_amount).collect();
+        let crates_range = towers[from - 1].len() - amount..;
+        let crates: Vec<char> = towers[from - 1].drain(crates_range).collect();
         towers[to - 1].extend(crates);
     }
 
