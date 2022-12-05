@@ -53,12 +53,12 @@ fn parse_towers(input: &str) -> Vec<Vec<char>> {
     let mut lines = input.lines().rev().into_iter();
     let numbers_line = lines.next().expect("Expected at least one line.");
     let tower_numbers_len = numbers_line.len() + 2; // +2 since we have a new line cut away by lines
+
+    // Build up 2D array
     let amount_of_towers = tower_numbers_len / 4; // zero-indexed
     let mut towers = Vec::with_capacity(amount_of_towers);
-
-    let length_of_tower_with_most_crates = input.lines().count() - 1;
     for _ in 0..amount_of_towers {
-        towers.push(Vec::with_capacity(length_of_tower_with_most_crates));
+        towers.push(Vec::new());
     }
 
     for line in lines {
