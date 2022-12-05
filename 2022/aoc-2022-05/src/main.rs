@@ -3,6 +3,7 @@ use std::fs;
 fn main() {
     let input = fs::read_to_string("./input.txt").expect("Unable to read file");
     part_1(&input);
+    part_2(&input);
 }
 
 fn part_1(input: &String) {
@@ -25,6 +26,27 @@ fn part_1(input: &String) {
         .collect::<String>();
 
     println!("Part 1: {:?}", top_crates);
+}
+
+fn part_2(input: &String) {
+    let Some((towers_part, moves_part)) = input.split_once("\n\n") else {
+        panic!("Expect to split between towers and moves")
+    };
+    let mut towers = parse_towers(towers_part);
+    let moves = parse_moves(moves_part);
+
+    for (amount, from, to) in moves.iter() {
+        let crates_amount = towers[from - 1].len() - amount..;
+        let crates: Vec<char> = towers[from - 1].drain(crates_amount).collect();
+        towers[to - 1].extend(crates);
+    }
+
+    let top_crates = towers
+        .iter_mut()
+        .map(|tower| tower.pop().unwrap_or(' '))
+        .collect::<String>();
+
+    println!("Part 2: {:?}", top_crates);
 }
 
 fn parse_towers(input: &str) -> Vec<Vec<char>> {
