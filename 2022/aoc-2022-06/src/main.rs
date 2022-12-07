@@ -3,20 +3,23 @@ use std::{collections::HashSet, fs};
 fn main() {
     let input = fs::read_to_string("./input.txt").expect("Unable to read file");
 
-    let start_of_marker = input
+    let part_1 = find_marker(&input, 4);
+    println!("Part 1: {:?}", part_1);
+
+    let part_2 = find_marker(&input, 14);
+    println!("Part 2: {:?}", part_2);
+}
+
+fn find_marker(input: &String, window: usize) -> usize {
+    input
         .chars()
         .collect::<Vec<char>>()
-        .windows(4)
-        .position(|window| HashSet::<&char>::from_iter(window.iter()).len() == window.len())
-        .expect("Expected to find a marker!");
+        .windows(window)
+        .position(|window| all_unique(window))
+        .map(|position| position + window)
+        .expect("Expected to find a marker!")
+}
 
-    println!("Part 1: {:?}", (start_of_marker + 4));
-
-    let start_of_marker = input
-        .chars()
-        .collect::<Vec<char>>()
-        .windows(14)
-        .position(|window| HashSet::<&char>::from_iter(window.iter()).len() == window.len())
-        .expect("Expected to find a marker!");
-    println!("Part 2: {:?}", (start_of_marker + 14));
+fn all_unique(chars: &[char]) -> bool {
+    HashSet::<&char>::from_iter(chars.iter()).len() == chars.len()
 }
