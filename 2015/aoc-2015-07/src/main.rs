@@ -14,6 +14,12 @@ fn main() {
     }
     let result_part_1 = part_1(&mut wire, &commands, &"a".into());
     println!("Part 1: {:?}", result_part_1);
+
+    wire.clear();
+    wire.insert("b".to_string(), result_part_1);
+
+    let result_part_2 = part_1(&mut wire, &commands, &"a".into());
+    println!("Part 2: {:?}", result_part_2);
 }
 
 fn part_1(wire: &mut HashMap<String, u16>, commands: &HashMap<String, Command>, var: &Term) -> u16 {
