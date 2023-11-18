@@ -8,23 +8,19 @@ fn main() {
         .collect::<Result<Vec<_>, _>>()
         .expect("Unable to parse lines to u32");
 
-    let mut increases = 0;
-    let mut previous_measurement = data
-        .first()
-        .expect("Expected at least one value in the input file");
+    let part_1 = data
+        .windows(2)
+        .fold(0, |acc, window| 
+            match window {
+                [a, b] if a < b => acc + 1,
+                _ => acc,
+            }
+        );
 
-
-    for measurement in data.iter().skip(1) {
-        if measurement > previous_measurement {
-            increases += 1;
-        }
-        previous_measurement = measurement;
-    }
-
-    println!("Answer part 1: {}", increases);
+    println!("Answer part 1: {}", part_1);
 
     let window_size: usize = 3;
-    let data_windows = data
+    let part_2 = data
             .windows(window_size)
             .map(|window: &[u32]| window.iter().sum::<u32>())
             .collect::<Vec<u32>>()
@@ -36,5 +32,5 @@ fn main() {
                 }
             );
 
-    println!("Answer part 2: {}", data_windows);
+    println!("Answer part 2: {}", part_2);
 }
