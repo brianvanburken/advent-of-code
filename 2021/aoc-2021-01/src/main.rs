@@ -13,6 +13,7 @@ fn main() {
         .first()
         .expect("Expected at least one value in the input file");
 
+
     for measurement in data.iter().skip(1) {
         if measurement > previous_measurement {
             increases += 1;
@@ -21,4 +22,19 @@ fn main() {
     }
 
     println!("Answer part 1: {}", increases);
+
+    let window_size: usize = 3;
+    let data_windows = data
+            .windows(window_size)
+            .map(|window: &[u32]| window.iter().sum::<u32>())
+            .collect::<Vec<u32>>()
+            .windows(2)
+            .fold(0, |acc, window| 
+                match window {
+                    [a, b] if a < b => acc + 1,
+                    _ => acc,
+                }
+            );
+
+    println!("Answer part 2: {}", data_windows);
 }
