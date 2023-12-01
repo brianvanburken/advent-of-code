@@ -41,7 +41,6 @@ fn spelled_line_to_digit(i: &str) -> u32 {
             last = digit;
         } else {
             for (zero_based_index, spelled_out_digit) in DIGITS.iter().enumerate() {
-                println!("{}, {}", zero_based_index, chars[i..].starts_with(spelled_out_digit));
                 if chars[i..].starts_with(spelled_out_digit) {
                     let digit = (zero_based_index + 1) as u32;
                     first = if first == 0 { digit * 10 } else { first };
