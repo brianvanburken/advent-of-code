@@ -3,15 +3,18 @@ use std::fs;
 fn main() {
     let input = fs::read_to_string("./input.txt").expect("Unable to read input file");
 
-    let mut sum_possible_game_ids = 0;
+    let mut part1 = 0;
+    let mut part2 = 0;
     for line in input.lines() {
         let game = Game::from(line);
         if game.is_possible() {
-            sum_possible_game_ids += game.id;
+            part1 += game.id;
         }
+        part2 += game.powers();
     }
 
-    println!("Part 1: {}", sum_possible_game_ids);
+    println!("Part 1: {}", part1);
+    println!("Part 2: {}", part2);
 }
 
 #[derive(Debug)]
@@ -22,6 +25,13 @@ struct Game {
 impl Game {
     fn is_possible(&self) -> bool {
         self.sets.iter().all(|set| set.is_possible())
+    }
+
+    fn powers(&self) -> u32 {
+        let (red, green, blue) = self.sets.iter().fold((0, 0, 0), |(red, green, blue), set| {
+            (red.max(set.red), green.max(set.green), blue.max(set.blue))
+        });
+        red as u32 * green as u32 * blue as u32
     }
 }
 
